@@ -3,9 +3,10 @@ package com.company;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
-import static java.lang.Double.NaN;
+
 
 
 /**
@@ -99,43 +100,52 @@ public class team {
         double otRate=0;
         if(!(winGames==0&&lossGames==0))
             otRate=otGames/(winGames+lossGames);
-
+        peep.add(weightedWins);
+        peep.add(weightedGames);
         //winPts,lossPts,avgPts,winRate,overtimeWinRate,overtimeWinPts,overtimeLossPts,avgOvertimePts
         double[]stats={winNum,lossNum,avgNum,WWinrate,otwinrate,otwinNum,otlossNum,avgotNum,otRate};
         return stats;
     }
 
+    public ArrayList<Integer> peep=new ArrayList<>();
     //give compact results a 1/5 weight in final winScore calculation
     public void setStats()throws IOException{
         double[]detailTour=statReader("TourneyDetailedResults.csv");
-        System.out.println("tourney details done "+id+"_"+name);
+
         double[]generalTour=statReader("TourneyCompactResults.csv");
-        System.out.println("tourney compact done "+id+"_"+name);
+
         double[]detailSeason=statReader("RegularSeasonDetailedResults.csv");
-        System.out.println("Season details done "+id+"_"+name);
+
         double[]generalSeason=statReader("RegularSeasonCompactResults.csv");
-        System.out.println("tourney details done "+id+"_"+name);
+
         double comp[]=new double [generalTour.length];
-        double hold[]=new double [4];
+        double hold[]={generalTour[3],detailTour[3],generalSeason[3],detailSeason[3]};
+        System.out.println(Arrays.toString(hold));
+        System.out.println(peep.toString());// the error is somewhere in here
 
         for(int i=0;i<comp.length;i++){
             int n=0;
             double total=0;
+
             if(generalSeason[i]!=0){
-                total+=145*generalSeason[i];
-                n+=145;
+                int ln=(int)Math.ceil(Lines("RegularSeasonCompactResults.csv")/1000);
+                total+=ln*generalSeason[i];
+                n+=ln;
             }
             if(generalTour[i]!=0){
-                total+=2*generalTour[i];
-                n+=2;
+                int ln=(int)Math.ceil(Lines("TourneyCompactResults.csv")/1000);
+                total+=ln*generalTour[i];
+                n+=ln;
             }
             if(detailSeason[i]!=0){
-                total+=70*detailSeason[i];
-                n+=70;
+                int ln=(int)Math.ceil(Lines("RegularSeasonDetailedResults.csv")/1000);
+                total+=ln*detailSeason[i];
+                n+=ln;
             }
             if(detailTour[i]!=0){
-                total+=detailTour[i];
-                n++;
+                int ln=(int)Math.ceil(Lines("TourneyDetailedResults.csv")/1000);
+                total+=ln*detailTour[i];
+                n+=ln;
             }
             if (n==0)
                 n++;
@@ -161,6 +171,13 @@ public class team {
     private double overtimeWinPts;
     private double overtimeLossPts;
     private double avgOvertimePts;
+    public double compare(team t2){
+        double diff=Math.log(0.5+Math.abs(this.winRate-t2.winRate));
+        if (this.winRate<t2.winRate){
+            diff*=-1;
+        }
+        return 0.5+diff;
+    }
 
     public final int id;
     public final String name;
@@ -182,7 +199,7 @@ public class team {
         }
         return s;
     }
-    public int tLines(String path){
+    public int Lines(String path){
         int ln=0;
         try {
             Scanner sc = new Scanner(new File(path));
@@ -196,7 +213,7 @@ public class team {
         catch(IOException ioe){
             System.out.println("ERROR:"+ioe+"\nCould not read File:"+path);
         }
-          return (int)Math.ceil((double)ln/1000);
+          return ln;
     }
 
     public void print(){
