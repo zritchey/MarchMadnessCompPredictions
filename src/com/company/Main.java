@@ -29,10 +29,13 @@ public class Main {
             sc.close();
             bw.close();
             fw.close();
+            sc=new Scanner
+
         }
         catch(IOException ioe){
 
         }
+
         for (team t:team.teamList){
             t.print();
         }

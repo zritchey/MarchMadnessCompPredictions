@@ -47,7 +47,7 @@ public class team {
                 //indx 2 is WTeam
                 //indx 4 is LTeam
                 if(Integer.parseInt(a[2])==id||Integer.parseInt(a[4])==id) {
-                    int weight = (int)Math.pow((Integer.parseInt(a[0]) - start),2);
+                    int weight = (int)Math.exp((Double.parseDouble(a[0]) - start));
                     weightedGames += weight;
                     if (Integer.parseInt(a[2]) == id) {//if the team wins
                         winGames++;
@@ -58,7 +58,6 @@ public class team {
                             otWin++;
                             otwinPts+=Integer.parseInt(a[3]);
                         }
-
                     }
                     else{
                         lossGames++;
@@ -97,13 +96,15 @@ public class team {
         double avgotNum=0;
         if(!(otWin==0&&otLoss==0))
             avgotNum=(otwinPts+(double)otlossPts)/(otWin+(double)otLoss);
-
-
+        double otRate=0;
+        if(!(winGames==0&&lossGames==0))
+            otRate=otGames/(winGames+lossGames);
 
         //winPts,lossPts,avgPts,winRate,overtimeWinRate,overtimeWinPts,overtimeLossPts,avgOvertimePts
-        double[]stats={winNum,lossNum,avgNum,WWinrate,otwinrate,otwinNum,otlossNum,avgotNum};
+        double[]stats={winNum,lossNum,avgNum,WWinrate,otwinrate,otwinNum,otlossNum,avgotNum,otRate};
         return stats;
     }
+
     //give compact results a 1/5 weight in final winScore calculation
     public void setStats()throws IOException{
         double[]detailTour=statReader("TourneyDetailedResults.csv");
@@ -148,12 +149,14 @@ public class team {
         overtimeWinPts=comp[5];
         overtimeLossPts=comp[6];
         avgOvertimePts=comp[7];
+        overtimeGameRate=comp[8];
 
     }
     private double winPts;
     private double lossPts;
     private double avgPts;
     private double winRate;
+    private double overtimeGameRate;
     private double overtimeWinRate;
     private double overtimeWinPts;
     private double overtimeLossPts;
@@ -179,9 +182,26 @@ public class team {
         }
         return s;
     }
+    public int tLines(String path){
+        int ln=0;
+        try {
+            Scanner sc = new Scanner(new File(path));
+            sc.nextLine();
+            while(sc.hasNextLine()){
+                ln++;
+                sc.nextLine();
+            }
+            sc.close();
+        }
+        catch(IOException ioe){
+            System.out.println("ERROR:"+ioe+"\nCould not read File:"+path);
+        }
+          return (int)Math.ceil((double)ln/1000);
+    }
+
     public void print(){
         System.out.println("\n\n\nTeam:"+name+"\nWin Record:"+winRate+"%\nAverage Winning points:"+winPts+"\nAverage losing points: "+lossPts+"\nAverage points scored:"+avgPts+
-        "\nOvertime Win Record:"+overtimeWinRate+"%\nOvertime Winning Points Scored:"+overtimeWinPts+"\nOvertime Losing Points Scored:"+overtimeLossPts+
+        "\nOvertime Win Record:"+overtimeWinRate+"%\nOvertime Game Rate:"+overtimeGameRate+"%\nOvertime Winning Points Scored:"+overtimeWinPts+"\nOvertime Losing Points Scored:"+overtimeLossPts+
                 "\nAverage Overtime Points Scored:"+avgOvertimePts);
     }
 }
