@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static java.lang.Double.NaN;
+
+
 /**
  * Created by zr162 on 3/6/17.
  */
@@ -70,11 +73,35 @@ public class team {
                 }
             }
             sc.close();
+        double winNum=0;
+        if(winGames!=0)
+            winNum=pointWin/(double)winGames;
+        double lossNum=0;
+        if(lossGames!=0)
+            lossNum=pointLoss/(double)lossGames;
+        double avgNum=0;
+        if(!(winGames==0&&lossGames==0))
+            avgNum=(pointLoss+(double)pointWin)/(winGames+(double)lossGames);
+        double WWinrate=0;
+        if(weightedGames!=0)
+            WWinrate=weightedWins/(double)weightedGames;
+        double otwinrate=0;
+        if(otGames!=0)
+            otwinrate=otWin/(double)otGames;
+        double otwinNum=0;
+        if(otWin!=0)
+            otwinNum=otwinPts/(double)otWin;
+        double otlossNum=0;
+        if(otLoss!=0)
+            otlossNum=otlossPts/(double)otLoss;
+        double avgotNum=0;
+        if(!(otWin==0&&otLoss==0))
+            avgotNum=(otwinPts+(double)otlossPts)/(otWin+(double)otLoss);
 
 
 
         //winPts,lossPts,avgPts,winRate,overtimeWinRate,overtimeWinPts,overtimeLossPts,avgOvertimePts
-        double[]stats={pointWin/(double)winGames,pointLoss/(double)lossGames,(pointLoss+(double)pointWin)/(winGames+(double)lossGames),weightedWins/(double)weightedGames,otWin/(double)otGames,otwinPts/(double)otWin,otlossPts/(double)otLoss,(otwinPts+(double)otlossPts)/(otWin+(double)otLoss)};
+        double[]stats={winNum,lossNum,avgNum,WWinrate,otwinrate,otwinNum,otlossNum,avgotNum};
         return stats;
     }
     //give compact results a 1/5 weight in final winScore calculation
@@ -88,8 +115,30 @@ public class team {
         double[]generalSeason=statReader("RegularSeasonCompactResults.csv");
         System.out.println("tourney details done "+id+"_"+name);
         double comp[]=new double [generalTour.length];
+        double hold[]=new double [4];
+
         for(int i=0;i<comp.length;i++){
-            comp[i]=((2*generalTour[i])+145*generalSeason[i]+70*detailSeason[i]+detailTour[i])/218;
+            int n=0;
+            double total=0;
+            if(generalSeason[i]!=0){
+                total+=145*generalSeason[i];
+                n+=145;
+            }
+            if(generalTour[i]!=0){
+                total+=2*generalTour[i];
+                n+=2;
+            }
+            if(detailSeason[i]!=0){
+                total+=70*detailSeason[i];
+                n+=70;
+            }
+            if(detailTour[i]!=0){
+                total+=detailTour[i];
+                n++;
+            }
+            if (n==0)
+                n++;
+            comp[i]=total/n;
         }
         winPts=comp[0];
         lossPts=comp[1];
@@ -131,8 +180,8 @@ public class team {
         return s;
     }
     public void print(){
-        System.out.println("Team:"+name+"\nWin Record:"+winRate+"%\nAverage Winning points:"+winPts+"\nAverage losing points: "+lossPts+"\nAverage points scored:"+avgPts+
+        System.out.println("\n\n\nTeam:"+name+"\nWin Record:"+winRate+"%\nAverage Winning points:"+winPts+"\nAverage losing points: "+lossPts+"\nAverage points scored:"+avgPts+
         "\nOvertime Win Record:"+overtimeWinRate+"%\nOvertime Winning Points Scored:"+overtimeWinPts+"\nOvertime Losing Points Scored:"+overtimeLossPts+
-                "\nAverage Overtime Points Scored:"+avgOvertimePts+"\n\n\n");
+                "\nAverage Overtime Points Scored:"+avgOvertimePts);
     }
 }
