@@ -5,11 +5,18 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+        long time=System.currentTimeMillis();
+        SimpleDateFormat sdf=new SimpleDateFormat("mm:ss:SS");
         try {
             Scanner sc = new Scanner(new File("Teams.csv"));
             sc.nextLine();
@@ -29,7 +36,8 @@ public class Main {
             sc.close();
             bw.close();
             fw.close();
-            fw=new FileWriter("Predictions.csv");
+            String path="Predictions.csv";
+            fw=new FileWriter(path);
             bw=new BufferedWriter(fw);
             for (int i=0;i<team.teamList.size()-1;i++){
                 team t1=team.teamList.get(i);
@@ -44,7 +52,7 @@ public class Main {
             }
             bw.close();
             fw.close();
-            sc=new Scanner(new File("Predictions.csv"));
+            sc=new Scanner(new File(path));
             while(sc.hasNextLine()){
                 System.out.println(sc.nextLine());
             }
@@ -58,7 +66,7 @@ public class Main {
         for (team t:team.teamList){
             t.print();
         }
-
+        System.out.println("\n\n\n\nTime elapsed: "+sdf.format(System.currentTimeMillis()-time));
 
 
     }

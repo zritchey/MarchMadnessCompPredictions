@@ -48,7 +48,7 @@ public class team {
                 //indx 2 is WTeam
                 //indx 4 is LTeam
                 if(Integer.parseInt(a[2])==id||Integer.parseInt(a[4])==id) {
-                    int weight = (int)Math.exp((Double.parseDouble(a[0]) - start));
+                    int weight = (int)Math.pow((Double.parseDouble(a[0]) - start),2);///I expect the weight of the wins to make a large difference in precision
                     weightedGames += weight;
                     if (Integer.parseInt(a[2]) == id) {//if the team wins
                         winGames++;
@@ -100,8 +100,7 @@ public class team {
         double otRate=0;
         if(!(winGames==0&&lossGames==0))
             otRate=otGames/(winGames+lossGames);
-        peep.add(weightedWins);
-        peep.add(weightedGames);
+
         //winPts,lossPts,avgPts,winRate,overtimeWinRate,overtimeWinPts,overtimeLossPts,avgOvertimePts
         double[]stats={winNum,lossNum,avgNum,WWinrate,otwinrate,otwinNum,otlossNum,avgotNum,otRate};
         return stats;
@@ -120,8 +119,6 @@ public class team {
 
         double comp[]=new double [generalTour.length];
         double hold[]={generalTour[3],detailTour[3],generalSeason[3],detailSeason[3]};
-        System.out.println(Arrays.toString(hold));
-        System.out.println(peep.toString()+"\n\n");// the error is somewhere in here
 
         for(int i=0;i<comp.length;i++){
             int n=0;
