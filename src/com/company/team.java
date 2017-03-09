@@ -121,7 +121,7 @@ public class team {
         double comp[]=new double [generalTour.length];
         double hold[]={generalTour[3],detailTour[3],generalSeason[3],detailSeason[3]};
         System.out.println(Arrays.toString(hold));
-        System.out.println(peep.toString());// the error is somewhere in here
+        System.out.println(peep.toString()+"\n\n");// the error is somewhere in here
 
         for(int i=0;i<comp.length;i++){
             int n=0;
