@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 
@@ -48,7 +49,7 @@ public class team {
                 //indx 2 is WTeam
                 //indx 4 is LTeam
                 if(Integer.parseInt(a[2])==id||Integer.parseInt(a[4])==id) {
-                    int weight = (int)Math.pow((Double.parseDouble(a[0]) - start),2);///I expect the weight of the wins to make a large difference in precision
+                    int weight = (int)Math.pow(1.5,(Double.parseDouble(a[0]) - start));///I expect the weight of the wins to make a large difference in precision
                     weightedGames += weight;
                     if (Integer.parseInt(a[2]) == id) {//if the team wins
                         winGames++;
@@ -82,10 +83,10 @@ public class team {
         double avgNum=0;
         if(!(winGames==0&&lossGames==0))
             avgNum=(pointLoss+(double)pointWin)/(winGames+(double)lossGames);
-        double WWinrate=0;
+        double WWinrate=0.5;
         if(weightedGames!=0)
             WWinrate=weightedWins/(double)weightedGames;
-        double otwinrate=0;
+        double otwinrate=0.5;
         if(otGames!=0)
             otwinrate=otWin/(double)otGames;
         double otwinNum=0;
@@ -157,7 +158,7 @@ public class team {
         overtimeLossPts=comp[6];
         avgOvertimePts=comp[7];
         overtimeGameRate=comp[8];
-
+        print();
     }
     private double winPts;
     private double lossPts;
@@ -168,11 +169,33 @@ public class team {
     private double overtimeWinPts;
     private double overtimeLossPts;
     private double avgOvertimePts;
+
     public double compare(team t2){
         double diff=Math.log(0.5+Math.abs(this.winRate-t2.winRate));
+
         if (this.winRate<t2.winRate){
             diff*=-1;
         }
+        if (this.avgPts+this.winPts*this.winRate<t2.avgPts+t2.winPts*t2.winRate)
+            diff-=Math.log(1+0.2*Math.abs(diff));
+        else
+            diff+=Math.log(1+0.2*Math.abs(diff));
+        if ((Math.abs(this.avgPts-t2.avgPts)<5)){
+            int chance=(int)(100*((this.overtimeGameRate+t2.overtimeGameRate)/2));
+
+
+            if(overtimeWinRate*overtimeWinPts<t2.overtimeWinRate*t2.overtimeWinPts)
+                diff-=Math.log(1+0.075*Math.abs(overtimeWinRate-t2.overtimeWinRate));
+            else
+                diff+=Math.log(1+0.075*Math.abs(overtimeWinRate-t2.overtimeWinRate));
+
+        }
+
+        if(diff>0.45)
+            diff=0.45;
+        if(diff<-0.45)
+            diff=-0.45;
+
         return 0.5+diff;
     }
 
